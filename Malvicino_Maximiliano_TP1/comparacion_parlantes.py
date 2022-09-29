@@ -1,7 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
-
 # Load signals
 
 signalA = np.load('files\\loudspeaker_Genelec.npy')

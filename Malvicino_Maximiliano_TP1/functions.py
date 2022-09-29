@@ -173,7 +173,7 @@ def gen_discrete_signals(signal_name, a=-10, b=10, n_0=10, on=5, off=15, m=5, mu
     samples_ticks = []
     
     if len(n.tolist()) > 21:
-        samples_ticks = list(filter(lambda i : i % 2 == 0 , n.tolist()))
+        samples_ticks = gen_ticks(n, N=21)
     else:
         samples_ticks = n.tolist()
     
@@ -247,7 +247,6 @@ def gen_n_sin(*frequencies, a = 0, b=1, f_s = 44100, A=1, isClosedInterval = Tru
         y_i = A*np.sin(omega_i*t)
         signal_i = (t , y_i , f'sin_{i+1}_freq_{frequencies[i]}')
         output.append(signal_i)
-        # plt.plot(t,y_i) # Plot de prueba
     
     return output
 
@@ -285,3 +284,50 @@ def plot_sin_list(tuples_list, **plot_kwargs):
     plt.legend(labels, loc="upper right")
     
     return
+
+
+def gen_ticks(n=[], N=21, scale='octave'):
+    
+    # Default outputs if input is nule
+    
+    ticks = []
+    ticklabels = []
+    
+    if n == [] and scale == 'octave':
+        for i in range(0, 10, 1):
+            ticks.append(31.25*(2**i))
+            if 31.25*(2**i) < 1000:
+                ticklabels.append(str(int(31.25*(2**i))))
+            else:
+                ticklabels.append(str(int((31.25/1000)*(2**i)))+'k')
+    
+    return ticks, ticklabels
+    
+    
+    # Check if the input is a list
+    
+    if type(n) == np.ndarray:
+        n = n.tolist()
+    elif type(n) != list:
+        raise ValueError('The input can not be converted to a list.')
+    
+    
+    # Set n to even lenght and N to greatest common divisor
+    
+    if len(n)%2 != 0:
+        del n[-1]
+    
+    while len(n)%N != 0:
+        N = N - 1
+    
+    
+    # Create ticks list
+    
+    ticks = [None]*N
+    
+    K = int(len(n)/N)
+    
+    for i in range(1, N+1, 1):
+        ticks[i-1] = n[K*i-1]
+    
+    return ticks
