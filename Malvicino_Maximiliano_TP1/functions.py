@@ -370,10 +370,12 @@ def gen_ticks(n=[], N=5, freq=1, preset='octaves'):
     
     
     # Octaves preset
+    
     '''
     ticks = [31.5, 63, 125, 250, 500, 1000, 2000, 4000, 8000, 16000]
     ticklabels = ['31.5', '63', '125', '250', '500', '1k', '2k', '4k', '8k', '16k']
     '''
+    
     if n == [] and preset == 'octaves':
         for i in range(0, 10, 1):
             ticks.append(31.25*(2**i))

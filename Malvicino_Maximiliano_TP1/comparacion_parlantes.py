@@ -2,7 +2,12 @@ import numpy as np
 from matplotlib import pyplot as plt
 import functions
 
-# Load signals
+
+'''
+-------------
+LOAD SIGNALS
+-------------
+'''
 
 signalA = np.load('files\\loudspeaker_Genelec.npy')
 signalB = np.load('files\\loudspeaker_JBL.npy')
@@ -39,10 +44,10 @@ axisBR.plot(freq_B, phi_B, color='red')
 # Plot configurations
 
 axisBL.set_xlabel('Frequency [Hz]')
-axisBL.set_ylabel('Amplitude [dB]')    
+axisBL.set_ylabel('Amplitude [dB]')
 axisBR.set_ylabel('Phase [Deg]')
 axisTL.set_xlabel('Frequency [Hz]')
-axisTL.set_ylabel('Amplitude [dB]')    
+axisTL.set_ylabel('Amplitude [dB]')
 axisTR.set_ylabel('Phase [Deg]')
 
 axisTL.set_xscale("log")
@@ -67,18 +72,7 @@ axisBR.legend(['Phase'], loc='upper right')
 
 plt.tight_layout()
 
-
-# Plot saving
-
-save_plot = 'y'
-
-while save_plot != 'y' and save_plot != 'n':
-    save_plot = input('Do you want to save the plot? [y/n] ')
-
-if save_plot == 'y':
-    savefig_kwargs = {'bbox_inches': 'tight', 'dpi': 300, 'transparent': False}
-    graph = plt.gcf()
-    graph.savefig('images\\comparacion_parlantes.png', **savefig_kwargs)
+graph1 = plt.gcf()
 
 
 '''
@@ -87,28 +81,23 @@ GRAPH 2: Amplitude A vs. Amplitude B // Phase A vs. Phase B
 ------------------------------------------------------------
 '''
 
-'''
+
 # Plot axis definitions
 
 fig, (axisTL, axisBL) = plt.subplots(2,1, figsize=(10,10), sharex=False)
 
-axisTR = axisTL.twinx()
-axisBR = axisBL.twinx()
-
 axisTL.plot(freq_A, x_A, color='blue')
-axisTR.plot(freq_A, x_B, color='red', linestyle=':')
+axisTL.plot(freq_A, x_B, color='red', linestyle='--')
 axisBL.plot(freq_B, phi_A, color='blue')
-axisBR.plot(freq_B, phi_B, color='red', linestyle=':')
+axisBL.plot(freq_B, phi_B, color='red', linestyle='--')
 
 
 # Plot configurations
 
 axisBL.set_xlabel('Frequency [Hz]')
-axisBL.set_ylabel('Amplitude [dB]')    
-axisBR.set_ylabel('Phase [Deg]')
+axisBL.set_ylabel('Amplitude [dB]')
 axisTL.set_xlabel('Frequency [Hz]')
-axisTL.set_ylabel('Amplitude [dB]')    
-axisTR.set_ylabel('Phase [Deg]')
+axisTL.set_ylabel('Amplitude [dB]')
 
 axisTL.set_xscale("log")
 axisBL.set_xscale("log")
@@ -120,20 +109,26 @@ axisTL.set_title('Amplitude')
 axisBL.set_title('Phase')
 
 octaves_float = functions.gen_ticks(preset='octaves')[0]
-octave_str = functions.gen_ticks(preset='octaves')[1]
+octaves_str = functions.gen_ticks(preset='octaves')[1]
 SPL = functions.make_list(np.arange(68, 92, 2))
-axes = (axisTL, axisBL)
-plt.setp(axes, xticks=octaves_float , xticklabels=octave_str , yticks=SPL, yticklabels=SPL)
+phase = functions.make_list(np.arange(-180, 180 + 45, 45))
 
-axisTL.legend(['Amplitude'], loc='lower left')
-axisTR.legend(['Phase'], loc='lower right')
-axisBL.legend(['Amplitude'], loc='upper left')
-axisBR.legend(['Phase'], loc='upper right')
+plt.setp(axisTL, xticks=octaves_float , xticklabels=octaves_str , yticks=SPL, yticklabels=SPL)
+plt.setp(axisBL, xticks=octaves_float , xticklabels=octaves_str , yticks=phase, yticklabels=phase)
+
+axisTL.legend(['Genelec', 'JBL'], loc='lower right')
+axisBL.legend(['Genelec', 'JBL'], loc='lower right')
 
 plt.tight_layout()
 
+graph2 = plt.gcf()
 
-# Plot saving
+
+'''
+------------
+PLOT SAVING
+------------
+'''
 
 save_plot = 'y'
 
@@ -142,6 +137,5 @@ while save_plot != 'y' and save_plot != 'n':
 
 if save_plot == 'y':
     savefig_kwargs = {'bbox_inches': 'tight', 'dpi': 300, 'transparent': False}
-    graph = plt.gcf()
-    graph.savefig('images\\comparacion_parlantes.png', **savefig_kwargs)
-'''
+    graph1.savefig('images\\comparacion_parlantes_amp_vs_phase.png', **savefig_kwargs)
+    graph2.savefig('images\\comparacion_parlantes_A_vs_B.png', **savefig_kwargs)
