@@ -4,9 +4,9 @@ import functions
 
 
 '''
--------------
-LOAD SIGNALS
--------------
+--------------------------------------
+SIGNALS LOADING & GENERAL DEFINITIONS
+--------------------------------------
 '''
 
 signalA = np.load('files\\loudspeaker_Genelec.npy')
@@ -19,6 +19,11 @@ phi_A = signalA[2,:]
 freq_B = signalB[0,:]
 x_B = signalB[1,:]
 phi_B = signalB[2,:]
+
+octaves_ticks = functions.gen_ticks(preset='octaves')[0]
+octaves_ticklabels = functions.gen_ticks(preset='octaves')[1]
+SPL_ticks = functions.make_list(np.arange(68, 92, 2))
+phase_ticks = functions.make_list(np.arange(-180, 180 + 45, 45))
 
 
 '''
@@ -36,9 +41,9 @@ axisTR = axisTL.twinx()
 axisBR = axisBL.twinx()
 
 axisTL.plot(freq_A, x_A, color='blue')
-axisTR.plot(freq_A, phi_A, color='red')
+axisTR.plot(freq_A, phi_A, color='red', linestyle='--')
 axisBL.plot(freq_B, x_B, color='blue')
-axisBR.plot(freq_B, phi_B, color='red')
+axisBR.plot(freq_B, phi_B, color='red', linestyle='--')
 
 
 # Plot configurations
@@ -59,11 +64,10 @@ axisBL.grid()
 axisTL.set_title('Genelec')
 axisBL.set_title('JBL')
 
-octaves_float = functions.gen_ticks(preset='octaves')[0]
-octave_str = functions.gen_ticks(preset='octaves')[1]
-SPL = functions.make_list(np.arange(68, 92, 2))
-axes = (axisTL, axisBL)
-plt.setp(axes, xticks=octaves_float , xticklabels=octave_str , yticks=SPL, yticklabels=SPL)
+axesL = (axisTL, axisBL)
+axesR = (axisTR, axisBR)
+plt.setp(axesL, xticks=octaves_ticks , xticklabels=octaves_ticklabels , yticks=SPL_ticks, yticklabels=SPL_ticks)
+plt.setp(axesR, yticks=phase_ticks, yticklabels=phase_ticks)
 
 axisTL.legend(['Amplitude'], loc='lower left')
 axisTR.legend(['Phase'], loc='lower right')
@@ -94,10 +98,10 @@ axisBL.plot(freq_B, phi_B, color='red', linestyle='--')
 
 # Plot configurations
 
-axisBL.set_xlabel('Frequency [Hz]')
-axisBL.set_ylabel('Amplitude [dB]')
 axisTL.set_xlabel('Frequency [Hz]')
 axisTL.set_ylabel('Amplitude [dB]')
+axisBL.set_xlabel('Frequency [Hz]')
+axisBL.set_ylabel('Phase [Deg]')
 
 axisTL.set_xscale("log")
 axisBL.set_xscale("log")
@@ -108,13 +112,8 @@ axisBL.grid()
 axisTL.set_title('Amplitude')
 axisBL.set_title('Phase')
 
-octaves_float = functions.gen_ticks(preset='octaves')[0]
-octaves_str = functions.gen_ticks(preset='octaves')[1]
-SPL = functions.make_list(np.arange(68, 92, 2))
-phase = functions.make_list(np.arange(-180, 180 + 45, 45))
-
-plt.setp(axisTL, xticks=octaves_float , xticklabels=octaves_str , yticks=SPL, yticklabels=SPL)
-plt.setp(axisBL, xticks=octaves_float , xticklabels=octaves_str , yticks=phase, yticklabels=phase)
+plt.setp(axisTL, xticks=octaves_ticks , xticklabels=octaves_ticklabels , yticks=SPL_ticks, yticklabels=SPL_ticks)
+plt.setp(axisBL, xticks=octaves_ticks , xticklabels=octaves_ticklabels , yticks=phase_ticks, yticklabels=phase_ticks)
 
 axisTL.legend(['Genelec', 'JBL'], loc='lower right')
 axisBL.legend(['Genelec', 'JBL'], loc='lower right')
