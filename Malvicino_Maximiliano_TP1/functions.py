@@ -3,6 +3,7 @@ from matplotlib import pyplot as plt
 
 
 def info(v):
+    
     """
     Gives descriptive information about a given variable.
 
@@ -18,11 +19,12 @@ def info(v):
     None.
 
     """
+    
     if type(v) == int:
         print(f'{v} is an integer.')
     
     elif type(v) == float:
-        print(f'{v} is a real number.')
+        print(f'{v} is a float.')
     
     elif type(v) == str:
         print(f'"{v}" is a string.')
@@ -54,7 +56,8 @@ def info(v):
     return
 
 
-def gen_discrete_signals(signal_name, a=-10, b=10, n_0=10, on=5, off=15, m=5, mu=0, sigma=1, isClosedInterval = True):
+def gen_discrete_signals(signal_name, n_start=-10, n_end=10, n_0=10, on=5, off=15, m=5, mu=0, sigma=1, isClosedInterval = True, **kwargs):
+    
     """
     Generates a custom discrete signal and optionally saves the plot and arrays involved.
     
@@ -64,10 +67,10 @@ def gen_discrete_signals(signal_name, a=-10, b=10, n_0=10, on=5, off=15, m=5, mu
     signal_name : STR
         Name of the signal which is going to be generated. E.g., unitImpulse, unitStep, sqPulse, triangPulse, rnd.
     
-    a : INT, optional
+    n_start : INT, optional
         Starting sample. The default is -10.
     
-    b : INT, optional
+    n_end : INT, optional
         Ending sample. The default is 10.
     
     n_0 : INT, optional
@@ -90,21 +93,30 @@ def gen_discrete_signals(signal_name, a=-10, b=10, n_0=10, on=5, off=15, m=5, mu
     
     isClosedInterval : BOOL, optional
         Determines whether the bound of the samples interval belongs to it or not. The default is True.
+    
+    **kwargs : UNPACKED DICT
+        Optional saving parameters.
+    
+        save_plot : BOOL
+            Determines whether the plot is saved to a .png file.
+            
+        save_array : BOOL
+            Determines whether the sample and amplitude arrays are saved to .npy files.
 
     Raises
     ------
     
     ValueError
-        The parameter a must be less than b by definition.
+        The parameter n_start must be less than n_end by definition.
     
     ValueError
-        The parameter n_0 does not belong to the interval [a,b].
+        The parameter n_0 does not belong to the interval [n_start,n_end].
     
     ValueError
         Duty Cycle can not be greater than 100%.
     
     ValueError
-        The parameter m must be greater than 0 and less than (b-a)/2.
+        The parameter m must be greater than 0 and less than (n_end-n_start)/2.
     
     ValueError
         Invalid input.
@@ -115,12 +127,14 @@ def gen_discrete_signals(signal_name, a=-10, b=10, n_0=10, on=5, off=15, m=5, mu
     None.
 
     """
+    
+    
     # Defines samples interval
     
-    if not a < b:
-        raise ValueError('The parameter a must be less than b by definition.')
+    if not n_start < n_end:
+        raise ValueError('The parameter n_start must be less than n_end by definition.')
     
-    n = np.arange(a, b+int(isClosedInterval), 1)
+    n = np.arange(n_start, n_end + int(isClosedInterval), 1)
     
     
     # Defines signal waveform
@@ -128,7 +142,7 @@ def gen_discrete_signals(signal_name, a=-10, b=10, n_0=10, on=5, off=15, m=5, mu
     if signal_name == 'unitImpulse':
         
         if n_0 > len(n):
-            raise ValueError('The parameter n_0 does not belong to the interval [a,b].')
+            raise ValueError('The parameter n_0 does not belong to the interval [n_start,n_end].')
         
         x = np.zeros(len(n))
         x[n_0] = 1    
@@ -136,7 +150,7 @@ def gen_discrete_signals(signal_name, a=-10, b=10, n_0=10, on=5, off=15, m=5, mu
     elif signal_name == 'unitStep':
         
         if n_0 > len(n):
-            raise ValueError('The parameter n_0 does not belong to the interval [a,b].')
+            raise ValueError('The parameter n_0 does not belong to the interval [n_start,n_end].')
         
         x = np.concatenate((np.zeros(n_0), np.ones(len(n)-n_0)), axis=0)
     
@@ -151,12 +165,12 @@ def gen_discrete_signals(signal_name, a=-10, b=10, n_0=10, on=5, off=15, m=5, mu
     
     elif signal_name == 'triangPulse':
         if m <= 0 or m > len(n)/2:
-            raise ValueError('The parameter m must be greater than 0 and less than (b-a)/2.')
+            raise ValueError('The parameter m must be greater than 0 and less than (n_end-n_start)/2.')
         
         x = np.zeros(len(n))
         
         for i in range(-m, m, 1):
-            n_i = int((b-a)/2 + i)
+            n_i = int((n_end-n_start)/2 + i)
             x[n_i] = 1-abs(i*(1/m))
     
     elif signal_name == 'rnd':
@@ -170,45 +184,37 @@ def gen_discrete_signals(signal_name, a=-10, b=10, n_0=10, on=5, off=15, m=5, mu
     
     plot_kwargs = {'alpha': 1, 'color': 'black', 'linestyle': '', 'linewidth': 1, 'marker': 'o'}
     
-    samples_ticks = []
-    
-    if len(n.tolist()) > 21:
-        samples_ticks = gen_ticks(n, N=21)
-    else:
-        samples_ticks = n.tolist()
-    
     plt.figure(figsize=(8,4))
     plt.plot(n,x, **plot_kwargs)
-    plt.xticks(samples_ticks)
     plt.grid()
     plt.xlabel("Samples")
     plt.ylabel("Amplitude")
     
-    # Saving
+    if len(n) < 21:
+        plt.xticks(n)
+    else:
+        plt.xticks(gen_ticks(n, N=21)[0])
     
-    save_plot = 'ask'
-    save_array = 'ask'
     
-    while save_plot != 'y' and save_plot != 'n':
-        save_plot = input('Do you want to save the plot? [y/n] ')
+    # Kwargs
     
-    while save_array != 'y' and save_array != 'n':
-        save_array = input('Do you want to save the arrays? [y/n] ')
-    
-    if save_plot == 'y':
-        savefig_kwargs = {'bbox_inches': 'tight', 'dpi': 300, 'transparent': False}
-        plt.savefig('images\\' + signal_name + 'Plot.png', **savefig_kwargs)
-    
-    if save_array == 'y':
-        np.save('files\\' + signal_name + 'Array_x', x)
-        np.save('files\\' + signal_name + 'Array_n', n)
+    for key, value in kwargs.items():
+        
+        if key == 'save_plot' and value == True:
+            savefig_kwargs = {'bbox_inches': 'tight', 'dpi': 300, 'transparent': False}
+            plt.savefig('images\\' + signal_name + 'Plot.png', **savefig_kwargs)
+        
+        if key == 'save_array' and value == True:
+            np.save('files\\' + signal_name + 'Array_x', x)
+            np.save('files\\' + signal_name + 'Array_n', n)
     
     return
 
 
-def gen_n_sin(*frequencies, a = 0, b=1, f_s = 44100, A=1, isClosedInterval = True):
+def gen_n_sin(*frequencies, A=1, f_s = 44100, isClosedInterval = True):
+    
     """
-    Generates an arbitrary quantity of sine waves from the defined input frequencies.
+    Generates a sine wave for each input frequency.
 
     Parameters
     ----------
@@ -216,18 +222,12 @@ def gen_n_sin(*frequencies, a = 0, b=1, f_s = 44100, A=1, isClosedInterval = Tru
     *frequencies : UNPACKED TUPLE OF FLOATS
         Unpacked tuple containing the frequency values of the sine waves which are going to be generated.
     
-    a : FLOAT, optional
-        Starting point in seconds. The default is 0.
-    
-    b : FLOAT, optional
-        Ending point in seconds. The default is 1.
-    
-    f_s : FLOAT, optional
-        Sampling frequency rate. The default is 44100.
-    
     A : FLOAT, optional
         Amplitude of all the sine waves which are going to be generated. The default is 1.
     
+    f_s : FLOAT, optional
+        Sampling frequency rate. The default is 44100.
+        
     isClosedInterval : BOOL, optional
         Determines whether the bound of the samples interval belongs to it or not. The default is True.
 
@@ -235,30 +235,44 @@ def gen_n_sin(*frequencies, a = 0, b=1, f_s = 44100, A=1, isClosedInterval = Tru
     -------
     
     output : LIST OF TUPLES
-        For each sine wave generated, the function returns a list of one tuple for every signal. Each tuple has three components that contains the time vector, the amplitude vector and a label respectively.
-
+        For each sine wave generated, the function returns a list of one tuple for every signal.
+        Each tuple has three components that contains the time vector, the amplitude vector and a label respectively.
+        Thus, the output for n signals generated would be:
+        [ (time_1, amplitude_1, label_1) , (time_2, amplitude_2, label_2) , ... , (time_n, amplitude_n, label_n) ]
+        Where time_i and amplitude_i are numpy arrays which holds the signal data and label_i is a string with descriptive porposes, being i a natural number between 1 and n.
+        The average frequency is specified between brackets in its' label.
     """
-    t = np.arange(a/max(frequencies), b/max(frequencies) + int(isClosedInterval)/f_s , 1/f_s)
+    
+    t = np.arange(0, 1/closest_to_average(frequencies) + int(isClosedInterval)/f_s , 1/f_s)
     
     output = []
     
     for i in range(0, len(frequencies), 1):
         omega_i = 2*np.pi*frequencies[i]
         y_i = A*np.sin(omega_i*t)
-        signal_i = (t , y_i , f'sin_{i+1}_freq_{frequencies[i]}')
+        if frequencies[i] == closest_to_average(frequencies):
+            label = f'sin_{i+1}_freq_{frequencies[i]}Hz(ave)'
+        else:
+            label= f'sin_{i+1}_freq_{frequencies[i]}Hz'
+        signal_i = (t , y_i , label)
         output.append(signal_i)
     
     return output
 
 
 def plot_sin_list(tuples_list, **plot_kwargs):
+    
     """
-    Plots a list of signals.
+    Plots a list of sine waveforms in an interval determined by the average period of all the signals.
 
     Parameters
     ----------
     tuples_list : LIST OF TUPLES
         List of tuples containing each tuple the x-y axes data in the first two components.
+        The third component of each tuple have to be a string carring the label of the respective signal, with the following format:
+            'sin_N_freq_FHz' being N any natural number and F the frequency of the sinewave.
+        The label of the sinewave with the average frequency must have the word 'ave' between brackets, have no spaces between characters and have the following format:
+            'sin_N_freq_FHz(ave)' being N any natural number and F the frequency of the sinewave.
     
     **plot_kwargs : UNPACKED DICT
         Arguments for the matplotlib.plot() function.
@@ -269,6 +283,7 @@ def plot_sin_list(tuples_list, **plot_kwargs):
     None.
 
     """
+    
     plt.grid()
     plt.xlabel("Time [s]")
     plt.ylabel("Amplitude")
@@ -280,20 +295,86 @@ def plot_sin_list(tuples_list, **plot_kwargs):
         y = tuples_list[i][1]
         plt.plot(x,y, **plot_kwargs)
         labels.append(tuples_list[i][2])
+        if 'ave' in tuples_list[i][2]:
+            cut = len(tuples_list[i][2]) - 7
+            freq_ave = float(tuples_list[i][2][11:cut])
     
+    plt.xticks(gen_ticks(preset='periodic', freq=freq_ave, N=5)[0])
     plt.legend(labels, loc="upper right")
     
     return
 
 
-def gen_ticks(n=[], N=21, scale='octave'):
+def make_list(v):
     
-    # Default outputs if input is nule
+    """
+    Attempts to convert a given variable into a list.
+
+    Parameters
+    ----------
+    v : ANY TYPE
+
+    Returns
+    -------
+    lst : LIST
+
+    """
     
+    if type(v) == list:
+        lst = v
+    elif type(v) == np.ndarray:
+        lst = v.tolist()
+    else:
+        lst = list(v)
+    return lst
+
+
+def closest_to_average(v):
+    
+    """
+    Returns the value from a given list which is closest to the average of all the values from it.
+
+    Parameters
+    ----------
+    v : LIST OF FLOATS
+        Input variable of floats in which the value that aproximates to the average is going to be the output. The variable may also be a set, a tuple or a numpy array.
+
+    Returns
+    -------
+    closest : FLOAT
+        Float from the input which difference with the exact average is the smallest.
+
+    """
+    
+    floats_list = make_list(v)
+    average = sum(floats_list)/len(floats_list)
+    closest = 0
+    
+    if average in floats_list:
+        closest = average
+    else:
+        for i in floats_list:
+            difference = abs(average - i)
+            if difference < abs(average - closest):
+                closest = i
+    return closest 
+
+
+def gen_ticks(n=[], N=5, freq=1, preset='octaves'):
+    
+    '''gen_ticks() is under development'''
+    
+    n = make_list(n)
     ticks = []
     ticklabels = []
     
-    if n == [] and scale == 'octave':
+    
+    # Octaves preset
+    '''
+    ticks = [31.5, 63, 125, 250, 500, 1000, 2000, 4000, 8000, 16000]
+    ticklabels = ['31.5', '63', '125', '250', '500', '1k', '2k', '4k', '8k', '16k']
+    '''
+    if n == [] and preset == 'octaves':
         for i in range(0, 10, 1):
             ticks.append(31.25*(2**i))
             if 31.25*(2**i) < 1000:
@@ -301,33 +382,32 @@ def gen_ticks(n=[], N=21, scale='octave'):
             else:
                 ticklabels.append(str(int((31.25/1000)*(2**i)))+'k')
     
+    
+    # Periodic preset
+    
+    if n == [] and preset == 'periodic':
+        ticks = np.linspace(0, 1/freq, N)
+    
+    
+    # Generate N ticks along a list
+    
+    if n != []:    
+        if len(n)%2 != 0:
+            del n[-1] # Set n to even lenght
+        
+        while len(n)%N != 0:
+            N = N - 1 # Set N to greatest common divisor
+        
+        ticks = [None]*N
+        K = int(len(n)/N)
+        
+        for i in range(1, N+1, 1):
+            ticks[i-1] = n[K*i-1]
+    
+    
+    # Default ticklabels
+    
+    if ticklabels == []:
+        ticklabels  = ticks
+    
     return ticks, ticklabels
-    
-    
-    # Check if the input is a list
-    
-    if type(n) == np.ndarray:
-        n = n.tolist()
-    elif type(n) != list:
-        raise ValueError('The input can not be converted to a list.')
-    
-    
-    # Set n to even lenght and N to greatest common divisor
-    
-    if len(n)%2 != 0:
-        del n[-1]
-    
-    while len(n)%N != 0:
-        N = N - 1
-    
-    
-    # Create ticks list
-    
-    ticks = [None]*N
-    
-    K = int(len(n)/N)
-    
-    for i in range(1, N+1, 1):
-        ticks[i-1] = n[K*i-1]
-    
-    return ticks
