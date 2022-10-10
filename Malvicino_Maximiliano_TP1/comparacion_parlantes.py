@@ -1,4 +1,5 @@
 import numpy as np
+import os
 from matplotlib import pyplot as plt
 import functions
 
@@ -9,8 +10,8 @@ SIGNALS LOADING & GENERAL DEFINITIONS
 --------------------------------------
 '''
 
-signalA = np.load('files\\loudspeaker_Genelec.npy')
-signalB = np.load('files\\loudspeaker_JBL.npy')
+signalA = np.load(os.path.join(functions.root_dir(0), 'files', 'loudspeaker_Genelec.npy'))
+signalB = np.load(os.path.join(functions.root_dir(0), 'files', 'loudspeaker_JBL.npy'))
 
 freq_A = signalA[0,:]
 x_A = signalA[1,:]
@@ -129,12 +130,6 @@ PLOT SAVING
 ------------
 '''
 
-save_plot = 'y'
 
-while save_plot != 'y' and save_plot != 'n':
-    save_plot = input('Do you want to save the plot? [y/n] ')
-
-if save_plot == 'y':
-    savefig_kwargs = {'bbox_inches': 'tight', 'dpi': 300, 'transparent': False}
-    graph1.savefig('images\\comparacion_parlantes_amp_vs_phase.png', **savefig_kwargs)
-    graph2.savefig('images\\comparacion_parlantes_A_vs_B.png', **savefig_kwargs)
+functions.save(graph1, file_dir=os.path.join(functions.root_dir(0), 'images'), file_name='comparacion_parlantes_amp_vs_phase')
+functions.save(graph2, file_dir=os.path.join(functions.root_dir(0), 'images'), file_name='comparacion_parlantes_A_vs_B')

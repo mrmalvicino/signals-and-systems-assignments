@@ -325,18 +325,19 @@ def gen_discrete_signals(signal_name, n_start=-10, n_end=10, n_0=10, on=5, off=1
     else:
         plt.xticks(gen_ticks(n, N=21)[0])
     
+    graph = plt.gcf()
+    
     
     # Kwargs
     
     for key, value in kwargs.items():
         
         if key == 'save_plot' and value == True:
-            savefig_kwargs = {'bbox_inches': 'tight', 'dpi': 300, 'transparent': False}
-            plt.savefig('images\\' + signal_name + 'Plot.png', **savefig_kwargs)
+            save(graph, file_dir=os.path.join(root_dir(0), 'images'), file_name=signal_name+'Plot')
         
         if key == 'save_array' and value == True:
-            np.save('files\\' + signal_name + 'Array_x', x)
-            np.save('files\\' + signal_name + 'Array_n', n)
+            save(n, file_dir=os.path.join(root_dir(0), 'files'), file_name=signal_name+'Array_n')
+            save(x, file_dir=os.path.join(root_dir(0), 'files'), file_name=signal_name+'Array_x')
     
     return
 
