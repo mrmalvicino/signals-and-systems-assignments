@@ -1,0 +1,24 @@
+git config --global user.name "John Doe"
+git config --global user.email johndoe@example.com
+
+cd desktop
+
+git status
+
+git add .
+
+git commit -m "Message here"
+
+git log
+
+git remote add origin <link here>
+
+git push -u origin main
+
+git pull --rebase origin main
+
+git clone <link here>
+
+BORRAR ÚLTIMO COMMIT SIN DEJAR RASTRO:
+git reset --hard HEAD~1
+git push -f origin main

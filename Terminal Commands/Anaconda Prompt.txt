@@ -1,0 +1,36 @@
+# Navegar entre directorios
+
+cd ..
+cd desktop
+
+Crear-borrar archivos y carpetas
+
+mk dir myfolder
+rmdir /s myfolder
+type nul > myfile.txt
+del myfile.txt
+
+# Activar-desactivar environments
+
+conda activate myenvironment1
+
+# Ejecutar un server de Jupyter
+
+jupyter notebook
+
+# Ejecutar scripts de python
+
+python myscript.py
+
+# Frenar una ejecución
+
+ctrl + c
+
+# Otros
+
+Clear
+dir
+ls
+
+conda update anaconda
+conda install spyder=9.9.9
