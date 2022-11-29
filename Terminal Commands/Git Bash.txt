@@ -20,5 +20,14 @@ git pull --rebase origin main
 git clone <link here>
 
 BORRAR ÚLTIMO COMMIT SIN DEJAR RASTRO:
+-------------------------------------
 git reset --hard HEAD~1
 git push -f origin main
+
+GIT LFS
+-------
+git lfs track '*.pdf'
+git lfs track 'images/*.pdf'
+git lfs track 'images/'
+gi lfs track
+git lfs ls-files
