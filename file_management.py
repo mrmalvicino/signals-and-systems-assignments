@@ -29,6 +29,7 @@ def root_dir(param, open_root_dir=False):
     
     root_dir : STRING
         Path of the folder defined as root directory.
+    
     """
     
     if type(param) == int:

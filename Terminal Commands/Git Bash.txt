@@ -29,5 +29,5 @@ GIT LFS
 git lfs track '*.pdf'
 git lfs track 'images/*.pdf'
 git lfs track 'images/'
-gi lfs track
+git lfs track
 git lfs ls-files

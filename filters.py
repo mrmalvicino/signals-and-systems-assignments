@@ -304,21 +304,21 @@ def autoplot(x_11, y_11L, y_11R='empty', x_21='empty', y_21L='empty', y_21R='emp
     return
 
 
-def make_list(v): # Branched on 6/11/22
-
+def make_list(v):
+    
     """
     Attempts to convert a given variable into a list.
-
+    
     Parameters
     ----------
     
     v : ANY TYPE
-
+    
     Returns
     -------
     
     lst : LIST
-
+    
     """
     
     if type(v) == list:
@@ -327,10 +327,11 @@ def make_list(v): # Branched on 6/11/22
         lst = v.tolist()
     else:
         lst = list(v)
+    
     return lst
 
 
-def root_dir(param, open_root_dir=False): # Forked on 6/11/22
+def root_dir(param, open_root_dir=False):
     
     """
     Traces a folder relative to where the script is being executed.
@@ -356,6 +357,7 @@ def root_dir(param, open_root_dir=False): # Forked on 6/11/22
     
     root_dir : STRING
         Path of the folder defined as root directory.
+    
     """
     
     if type(param) == int:

@@ -8,29 +8,38 @@ from itertools import product
 
 BASEDIR = os.getcwd()
 
-
 def sweep(T:int, f1:int, f2:int, sample_rate:int, folder:str = "./", save_audio=False):
-    """Generates a logarithmic sweep signal, with the possibility of saving it in wav format.
+    
+    """
+    Generates a logarithmic sweep signal, with the possibility of saving it in wav format.
 
     Parameters
     ----------
+    
     T : int
         Sweep signal duration.
+    
     f1 : int
         Sweep start frequency.
+    
     f2 : int
         Sweep end frequency.
+    
     sample_rate : int
         Sweep sample rate frequency.
+    
     folder : str, optional
         Directory where the audio file can be saved, by default "./"
+    
     save_audio : bool, optional
         If is True, you can save an audio file at your chosen sample rate and 24-bit, by default False
 
     Returns
     -------
+    
     tuple
         Tuple with data time from 0 to T, and magnitude of sweep.
+    
     """
     
     t = np.linspace(0, T, sample_rate*T)
@@ -45,21 +54,22 @@ def sweep(T:int, f1:int, f2:int, sample_rate:int, folder:str = "./", save_audio=
     
     return (t, sweep_signal)
 
-def make_list(v): # Branched on 6/11/22
 
+def make_list(v):
+    
     """
     Attempts to convert a given variable into a list.
-
+    
     Parameters
     ----------
     
     v : ANY TYPE
-
+    
     Returns
     -------
     
     lst : LIST
-
+    
     """
     
     if type(v) == list:
@@ -68,7 +78,9 @@ def make_list(v): # Branched on 6/11/22
         lst = v.tolist()
     else:
         lst = list(v)
+    
     return lst
+
 
 def round_array(v, sig_digits=3):
     
@@ -395,25 +407,33 @@ def filter_bank(audio_input, f_s, p_ref=0.00002, b=1, G=2, N_order=3):
 
 
 def inverse_filter(x:tuple, T:int, f1:int, f2:int):
+    
     """
-    Generate an inverse filter from a sweep signal over time.
+    Generates an inverse filter from a sweep signal over time.
 
     Parameters
     ----------
+    
     x : tuple
         Tuple of a sweep signal with information of the time and magnitude.
+    
     T : int
         Sweep signal duration.
+    
     f1 : int
         Sweep start frequency.
+    
     f2 : int
         Sweep end frequency.
 
     Returns
     -------
+    
     tuple
         Tuple with data time from 0 to T, and magnitude of inverse filter.
+    
     """
+    
     t = x[0]
     R = np.log(f2/f1) # rate sweep
     L = T/R 
@@ -423,18 +443,24 @@ def inverse_filter(x:tuple, T:int, f1:int, f2:int):
 
     
 def list_udim(list1:list):
-    """Transform a matrix in horizontal list.
+    
+    """
+    Transform a matrix in horizontal list.
 
     Parameters
     ----------
+    
     list1 : list
         List to convert.
 
     Returns
     -------
+    
     list
         List converted.
+    
     """
+    
     list2 = []
     dim = np.array(list1).shape
 
@@ -449,18 +475,24 @@ def list_udim(list1:list):
 
 
 def frequency_labels(freqs:list, octave:int):
-    """Converts a list of frequency values ​​of type int to another list of frequencies of type str with suffix notation k, to use like a labels.
+    
+    """
+    Converts a list of frequency values ​​of type int to another list of frequencies of type str with suffix notation k, to use like a labels.
 
     Parameters
     ----------
+    
     freqs : list
         Frequency values in type int.
 
     Returns
     -------
+    
     list
         Frequency labels in type str.
+    
     """
+    
     f_labels = []
     
     
@@ -485,39 +517,55 @@ def frequency_labels(freqs:list, octave:int):
 
 
 def grapher(signals:list, dimension:tuple, bars:bool = False, oct_axis:int = 1, semilogx:bool = False, **options):
-    """Allow plot a list of functions in linear axis or semilog x axis.
+    
+    """
+    Allow plot a list of functions in linear axis or semilog x axis.
 
     Parameters
     ----------
+    
     signals : list
         A list of signals coming in as a tuple containing the X values ​​and Y values.
+    
     dimension : tuple
         Dimension of the subplots that will make up the plot area in format (rows, columns).
+    
     bars : bool, optional
         Show data how bars graphics, by default False.
+    
     oct_axis : int
         When bars or semilogx are True, then can set the x axis type. Set 1 for octaves or 3 por thirds octave. By default is 1.
+    
     semilogx : bool, optional
         Allow plot in logarithmic scale in X axis, by default False.
         
     **optionals
     -----------
+    
     figsize : tuple
         Determinate the size of the plot area, by default (15,8).
+    
     fontsize : int
         Fontsize base of label axis, this is scaled to 120%\ to titles, 80%\ to axis ticks labels. By default 12.
+    
     title : str or list
         Title of each figure. When its unidimensional plot (1,1) then title must be a str.
+    
     legends : list
         List that describes the each plots, this will be localized upper right in the subplot area.
+    
     xlabel : str
         Name of x axis, this will be the same in each subplots when plots multiple signals in differents subplots.
+    
     ylabel : str
         Name of y axis, this will be the same in each subplots when plots multiple signals in differents subplots.
+    
     xlim : list
         Limit of x axis, from a to b value. This will be the same in each subplots when plots multiple signals in differents subplots.
+    
     ylim : list
         Limit of y axis, from a to b value. This will be the same in each subplots when plots multiple signals in differents subplots.
+    
     """
     
     fig, axs = plt.subplots(*dimension, figsize=options['figsize'] if 'figsize' in options else (15,8))
@@ -620,37 +668,50 @@ def fft(x:np.ndarray):
 
     Parameters
     ----------
+    
     x : np.ndarray
         Magnitude of the signal to transform
 
     Returns
     -------
+    
     np.ndarray
         Magnitude transformed to frequency domain
+    
     """
+    
     fft_signal = np.fft.fft(x)
     fft_signal = fft_signal[:len(fft_signal)//2]
     magnitude = abs(fft_signal)/len(fft_signal)
     
     return magnitude
 
+
 def impulse_response(x:np.ndarray, y:np.ndarray, sr:int):
-    """Get the impulse response of a system using fft and ifft instead of convolve in time, h(t) = ifft(fft(x)*fft(y)) . The x and y inputs must have the same dimension.
+    
+    """
+    Get the impulse response of a system using fft and ifft instead of convolve in time, h(t) = ifft(fft(x)*fft(y)) . The x and y inputs must have the same dimension.
     
     Parameters
     ----------
+    
     x : np.ndarray
         magnitudes array of the signal x 
+    
     y : np.ndarray
         magnitudes array of the signal y 
+    
     sr : int
         Sample rate
 
     Returns
     -------
+    
     tuple
         Tuple containing time and magnitude information of the impulse response
+    
     """
+    
     if x.shape == y.shape:
         X = fft(x)
         Y = fft(y)
@@ -660,19 +721,23 @@ def impulse_response(x:np.ndarray, y:np.ndarray, sr:int):
         return (t, h)
     else:
         ValueError('Dimension of x and y are not same')
-        
-        
+
+
 def frec_sum(frequencies,sampling,duration):
+    
     """
     Performs the sum of the sinusoidal signals with the frequencies entered, 
     with a number of samples entered and with a duration entered. Then graph the result. 
 
     Parameters
     ----------
+    
     frequencies : tuple
         Frequencies of the sinusoidal signals to sum
+    
     sampling : int
         Number of samples of the result signal (must be between 10 and 100k)
+    
     duration : int
         Seconds of the signal duration, begins at 0 and stops at this parameter value
         
@@ -681,7 +746,9 @@ def frec_sum(frequencies,sampling,duration):
     -------
     out_signal : tuple
         Tuple with the time values and generated sum
+    
     """
+    
     out_signal=0
     time = np.linspace(0,duration,sampling*duration)
     for count,frequency in enumerate(frequencies):
@@ -691,20 +758,27 @@ def frec_sum(frequencies,sampling,duration):
 
 
 def load_audio(folder, files):
-    """_summary_
+    
+    """
+    _summary_
 
     Parameters
     ----------
+    
     folder : _type_
         _description_
+    
     files : _type_
         _description_
 
     Returns
     -------
+    
     _type_
         List with audio data, audio and sample rate in each position
+    
     """
+    
     audios = []
     
     if type(files) is list:

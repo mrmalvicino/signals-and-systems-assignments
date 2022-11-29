@@ -440,15 +440,17 @@ def make_list(v):
     
     """
     Attempts to convert a given variable into a list.
-
+    
     Parameters
     ----------
+    
     v : ANY TYPE
-
+    
     Returns
     -------
+    
     lst : LIST
-
+    
     """
     
     if type(v) == list:
@@ -457,6 +459,7 @@ def make_list(v):
         lst = v.tolist()
     else:
         lst = list(v)
+    
     return lst
 
 
